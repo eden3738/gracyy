@@ -1,0 +1,537 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile Template</title>
+    <link rel="icon" href="./assets/profile/white-heart-favicon.svg" type="image/svg+xml" />
+    <style>
+:root {
+  --accent: #f4c64f;
+  --accent-2: #ffffff;
+  --text: #fffaf0;
+  --muted: rgba(255, 250, 240, 0.78);
+  --panel: rgba(255, 255, 255, 0.08);
+  --shadow: rgba(14, 18, 28, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+a,
+button {
+  cursor: none;
+}
+
+.entry-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0)),
+    rgba(18, 22, 30, 0.72);
+  backdrop-filter: blur(9px);
+  transition: opacity 520ms ease, visibility 520ms ease;
+}
+
+.entry-gate.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.entry-button {
+  min-width: 150px;
+  min-height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.46);
+}
+
+.cursor-heart {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+}
+
+.cursor-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  pointer-events: none;
+}
+
+.trail-heart {
+  position: fixed;
+  left: 0;
+  top: 0;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1;
+  pointer-events: none;
+  animation: heartFall 900ms ease-in forwards;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+}
+
+.profile-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 70px) clamp(18px, 7vw, 120px);
+  background: #f8efe2;
+}
+
+.wallpaper,
+.warm-layer,
+.stars {
+  position: fixed;
+  inset: 0;
+}
+
+.wallpaper {
+  z-index: 0;
+  background-image: url("./assets/wallpapers/replace-me.svg");
+  background-position: center;
+  background-size: cover;
+  filter: grayscale(0.9) contrast(1.04) brightness(0.72);
+  transform: scale(1.03);
+}
+
+.warm-layer {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.08), rgba(255, 248, 232, 0.24)),
+    rgba(12, 18, 28, 0.45);
+  backdrop-filter: blur(1px);
+}
+
+.stars {
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.stars span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: clamp(90px, 13vw, 190px);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #ffffff);
+  opacity: 0;
+  animation: shootingStar 2.8s ease-in-out infinite;
+  animation-delay: var(--d);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+  transform: rotate(-32deg);
+  transform-origin: right center;
+  transition: filter 120ms ease, scale 120ms ease;
+  will-change: transform;
+}
+
+.stars span::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #ffffff;
+  transform: translateY(-50%);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.95);
+}
+
+.stars span:hover,
+.stars span.is-active {
+  filter: drop-shadow(0 0 18px rgba(255, 242, 184, 0.98));
+  scale: 1.25;
+}
+
+.hero,
+.spotify-section {
+  position: relative;
+  z-index: 3;
+}
+
+.hero {
+  width: min(100%, 1050px);
+  margin: 0 auto;
+  padding-top: clamp(12px, 3vw, 44px);
+  animation: pageEnter 900ms ease both;
+}
+
+.intro {
+  max-width: 760px;
+}
+
+.kicker,
+.eyebrow,
+.social-label {
+  margin: 0;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 10px 0 8px;
+  color: #ffffff;
+  font-size: clamp(44px, 6vw, 82px);
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.58);
+  overflow-wrap: anywhere;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(16px, 1.5vw, 21px);
+  line-height: 1.45;
+  max-width: 58ch;
+  white-space: pre-line;
+}
+
+.white-heart {
+  margin: 6px 0 8px;
+  color: #ffffff;
+  font-size: 17px;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.44);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(230px, 320px) minmax(260px, 360px);
+  gap: clamp(36px, 8vw, 110px);
+  align-items: end;
+  margin-top: clamp(64px, 9vw, 120px);
+}
+
+.display-card,
+.connect-card {
+  min-width: 0;
+}
+
+.avatar {
+  width: clamp(96px, 10vw, 118px);
+  aspect-ratio: 1;
+  margin-bottom: 16px;
+  border-radius: 28px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  background: rgba(255, 255, 255, 0.82);
+  filter: grayscale(1) brightness(1.28) contrast(0.92);
+  opacity: 0.96;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28), inset 0 0 28px rgba(255, 255, 255, 0.35);
+}
+
+.display-card {
+  position: relative;
+}
+
+.display-card::after {
+  content: "";
+  position: absolute;
+  left: clamp(46px, 5vw, 58px);
+  top: clamp(104px, 10vw, 126px);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid rgba(255, 255, 255, 0.86);
+}
+
+.display-card h2,
+.connect-card h2 {
+  margin: 4px 0 6px;
+  color: #ffffff;
+  font-size: clamp(32px, 3.5vw, 46px);
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.46);
+  overflow-wrap: anywhere;
+}
+
+.display-card p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.connect-card h2 {
+  margin-bottom: 22px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.connect-card {
+  display: grid;
+  gap: 18px;
+}
+
+.social-link {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.social-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.instagram-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.82);
+  stroke-width: 1.8;
+}
+
+.snapchat-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.82);
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.social-link > span:last-child {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.social-value {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+}
+
+.social-value::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+}
+
+.spotify-section {
+  width: min(100%, 1080px);
+  margin: clamp(70px, 10vw, 120px) auto 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.spotify-section iframe,
+.spotify-mount {
+  display: block;
+  border: 0;
+  width: 100%;
+  min-height: 352px;
+}
+
+@keyframes shootingStar {
+  0% { translate: 16vw -10vh; opacity: 0; }
+  10% { opacity: 0.95; }
+  55% { opacity: 0.85; }
+  100% { translate: -78vw 48vh; opacity: 0; }
+}
+
+@keyframes heartFall {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--drift)), 72px) scale(0.25) rotate(36deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pageEnter {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .profile-page {
+    padding: 28px 20px 42px;
+  }
+
+  .hero {
+    padding-top: 18px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    margin-top: 48px;
+  }
+
+  .spotify-section {
+    margin-top: 54px;
+  }
+
+  .spotify-section iframe,
+  .spotify-mount {
+    height: 420px;
+  }
+}
+
+@media (pointer: coarse) {
+  body,
+  a,
+  button {
+    cursor: auto;
+  }
+
+  .cursor-heart {
+    display: none;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="entry-gate" id="entryGate">
+      <button class="entry-button" id="entryButton" type="button">GLORY</button>
+    </div>
+    <div class="cursor-heart" id="cursorHeart" aria-hidden="true">&#9829;</div>
+    <div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
+
+    <main class="profile-page">
+      <div class="wallpaper" id="wallpaper"></div>
+      <div class="warm-layer"></div>
+      <div class="stars" id="stars" aria-hidden="true">
+        <span style="--x: 10%; --y: 10%; --d: 0s;"></span>
+        <span style="--x: 44%; --y: 4%; --d: .55s;"></span>
+        <span style="--x: 72%; --y: 16%; --d: 1.1s;"></span>
+        <span style="--x: 25%; --y: 32%; --d: 1.65s;"></span>
+        <span style="--x: 84%; --y: 40%; --d: 2.2s;"></span>
+        <span style="--x: 58%; --y: 58%; --d: 2.75s;"></span>
+      </div>
+
+      <section class="hero">
+        <div class="intro">
+          <p class="kicker" id="kicker">N.Rishitha</p>
+          <h1 id="title">N.Rishitha</h1>
+          <p class="white-heart">&#129293;</p>
+          <p class="subtitle" id="subtitle">Psalm 37:5 (NIV) states: "Commit your way to the LORD; trust in him and he will do this."<br />APRIL 8TH&#129293;</p>
+        </div>
+
+        <div class="profile-grid">
+          <section class="display-card" aria-label="Display card">
+            <img class="avatar" id="avatarImage" src="./assets/profile/display-picture.png" alt="Profile display picture" />
+            <p class="eyebrow">Display Card</p>
+            <h2 id="displayName">n_rishi77</h2>
+            <p id="displayBio">Gamer | Creator | Friend</p>
+          </section>
+
+          <section class="connect-card" aria-label="Connect links">
+            <h2>Connect</h2>
+            <a class="social-link" id="instagramLink" href="#" target="_blank" rel="noopener">
+              <span class="social-icon instagram-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <rect x="4" y="4" width="16" height="16" rx="5"></rect>
+                  <circle cx="12" cy="12" r="3.5"></circle>
+                  <circle cx="16.8" cy="7.2" r="1"></circle>
+                </svg>
+              </span>
+              <span>
+                <span class="social-label">Instagram</span>
+                <span class="social-value" id="instagramHandle">n_rishi77</span>
+              </span>
+            </a>
+            <a class="social-link" id="snapchatLink" href="#" target="_blank" rel="noopener">
+              <span class="social-icon snapchat-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <path d="M12 3.5c-3 0-5 2.2-5 5.4v3.2c0 1.2-.8 2.2-2 2.6 1.1.4 2 .5 2.8.5.5 1.6 2.1 2.8 4.2 2.8s3.7-1.2 4.2-2.8c.8 0 1.7-.1 2.8-.5-1.2-.4-2-1.4-2-2.6V8.9c0-3.2-2-5.4-5-5.4z"></path>
+                </svg>
+              </span>
+              <span>
+                <span class="social-label">Snapchat</span>
+                <span class="social-value" id="snapchatHandle">ris77</span>
+              </span>
+            </a>
+          </section>
+        </div>
+      </section>
+
+      <section class="spotify-section" aria-label="Spotify song">
+        <div id="spotifyMount" class="spotify-mount"></div>
+      </section>
+    </main>
+
+    <script src="./template.config.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
+
